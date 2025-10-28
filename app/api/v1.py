@@ -2,7 +2,23 @@
 API v1 router aggregator
 """
 from fastapi import APIRouter
-from app.api.routes import chat, documents, conversations, feedback, analytics, auth, users, settings, agent, widget, learning, soft_delete, chatbot_config
+from app.api.routes import (
+    chat,
+    documents,
+    conversations,
+    feedback,
+    analytics,
+    auth,
+    users,
+    settings,
+    agent,
+    widget,
+    learning,
+    soft_delete,
+    chatbot_config,
+    companies,
+    chatbots
+)
 
 api_router = APIRouter()
 
@@ -20,3 +36,7 @@ api_router.include_router(widget.router, prefix="/widget", tags=["Widget Setting
 api_router.include_router(learning.router, prefix="/learning", tags=["Learning System"])
 api_router.include_router(soft_delete.router, tags=["Soft Delete"])
 api_router.include_router(chatbot_config.router, prefix="/chatbot-config", tags=["Chatbot Configuration"])
+
+# Multi-tenant routes
+api_router.include_router(companies.router, prefix="/companies", tags=["Companies"])
+api_router.include_router(chatbots.router, prefix="/chatbots", tags=["Chatbots"])

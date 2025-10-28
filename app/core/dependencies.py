@@ -107,8 +107,15 @@ def get_optional_user(
 async def get_current_admin_user(
     current_user: dict = Depends(get_current_user)
 ) -> dict:
-    """Verify that current user is an admin"""
-    if not current_user.get("is_admin", False):
+    """
+    Verify that current user is an admin (Githaforge v2.0)
+
+    Accepts: super_admin, admin, owner roles
+    """
+    user_role = current_user.get("role", "member")
+
+    # Allow super_admin (Githaf internal), admin (company admin), owner (company owner)
+    if user_role not in ["super_admin", "admin", "owner"]:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Admin access required"

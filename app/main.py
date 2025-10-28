@@ -8,6 +8,7 @@ from app.api.v1 import api_router
 from app.middleware.cors import add_cors_middleware
 from app.middleware.error_handler import add_exception_handlers
 from app.middleware.rate_limiter import add_rate_limiter
+from app.middleware.rls_middleware import add_rls_middleware
 from app.core.database import test_connection
 from app.utils.logger import get_logger
 from app.services.scheduler import start_scheduler, stop_scheduler
@@ -18,14 +19,22 @@ logger = get_logger(__name__)
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version="2.0.0",
-    description="Agentic RAG-based customer service chatbot API for Githaf Consulting (Phase 3: Self-Improvement)",
+    description="Githaforge - Multi-Tenant RAG Chatbot Platform (Phase 3: Self-Improvement)",
     docs_url="/docs",
     redoc_url="/redoc"
 )
 
-# Add middleware
+# Add middleware (ORDER MATTERS!)
+# 1. CORS middleware (must be first to handle preflight requests)
 add_cors_middleware(app)
+
+# 2. RLS middleware (sets company context from JWT for multi-tenant isolation)
+add_rls_middleware(app)
+
+# 3. Rate limiter (protects against abuse)
 add_rate_limiter(app)
+
+# 4. Exception handlers (catches errors)
 add_exception_handlers(app)
 
 

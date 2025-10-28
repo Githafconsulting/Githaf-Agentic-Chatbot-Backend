@@ -54,10 +54,15 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
                 detail="User account is inactive"
             )
 
-        # Create access token
+        # Create access token with company_id and role for multi-tenant support
         access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+        token_data = {
+            "sub": str(user["id"]),
+            "company_id": str(user.get("company_id")) if user.get("company_id") else None,
+            "role": user.get("role", "member")
+        }
         access_token = create_access_token(
-            data={"sub": str(user["id"])},
+            data=token_data,
             expires_delta=access_token_expires
         )
 

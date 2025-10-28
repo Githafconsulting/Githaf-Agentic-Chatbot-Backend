@@ -14,6 +14,8 @@ class User(BaseModel):
     full_name: Optional[str] = None
     is_active: bool = True
     is_admin: bool = False
+    company_id: Optional[UUID] = None  # Multi-tenant support
+    role: Optional[str] = "member"  # owner, admin, member
     created_at: datetime
 
 
@@ -40,4 +42,6 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     """Token payload data"""
     sub: str = Field(..., description="Subject (user ID)")
+    company_id: Optional[str] = Field(None, description="Company ID for multi-tenant RLS")
+    role: Optional[str] = Field(None, description="User role (owner, admin, member)")
     exp: Optional[datetime] = None
